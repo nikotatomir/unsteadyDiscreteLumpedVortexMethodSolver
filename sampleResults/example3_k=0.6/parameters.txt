@@ -1,0 +1,44 @@
+#-------------------------------IMPORTANT--------------------------------------------#
+# after the computations are done, there is an option to get an animation of the 
+# airfoil motion. However, this takes a long time to compute (depending on the number)
+# of time steps used. By default, it is turned of. If you want it, define it as 'yes' below
+getAnimation = 'no' # 'yes' of 'no'
+
+#------------------------BASIC-PROPERTIES--------------------------------------------#
+
+c = 1 # chord length in meters
+rho = 1 # density in kg/m^3
+
+Mchord = 10 # number of panels
+typeSpacing = "uniform" # "uniform" or "cosine"
+
+# DO NOT CHANGE
+wakeConvection = "no" # "yes" or "no", BUT "yes" option not implemented yet!
+
+#------------------------MOTION DEFINITION-------------------------------------------#
+
+# TRANSLATION
+UinertialEarth = -50# m/s, x-component of intertial velocity defined in xe,ze system
+# DO NOT CHANGE, WinertialEarth must be zero for panel Force to work
+WinertialEarth = 0. # m/s,  z-component of intertial velocity defined in xe,ze system
+
+# SINUSOIDAL PITCHING
+pitchFreqHz = 12.732395*3/4 # in Hz
+pitchAmpRad = math.radians(3) # value given in degrees, then converted to radians
+pitchSSrad = math.radians(2) # value given in degrees, then converted to radians
+rotationPt = 0.5*c # goes from 0 to c, DEFINED as "a" in Plots
+
+#-------------------------TIME-PARAMETERS--------------------------------------------#
+
+deltaT = 0.00075
+NumberOfTimeSteps = 700
+totalTime = NumberOfTimeSteps*deltaT 
+time = np.arange(0, totalTime + 0.000001, deltaT)
+
+#-------------------------FLOW-PARAMETERS--------------------------------------------#
+
+Vmagnitude = np.linalg.norm([UinertialEarth,WinertialEarth])
+pitchFreqRad = 2*np.pi*pitchFreqHz 
+reducedFreq = (pitchFreqRad*c)/(2*Vmagnitude)
+katzParameter = pitchAmpRad*pitchFreqRad*c/Vmagnitude
+shedVortexFactor = 0.25 # should be between 0.2-0.3
